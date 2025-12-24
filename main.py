@@ -31,9 +31,26 @@ else:
         from pycoral.utils.edgetpu import make_interpreter
     except ImportError as e:
         print(f"Error importing pycoral: {e}")
-        print("Set MOCK_MODE=true to test without Coral hardware")
-        print("Or install: pip install --extra-index-url https://google-coral.github.io/py-repo/ pycoral~=2.0")
-        exit(1)
+        print("Trying fallback to TensorFlow Lite...")
+        try:
+            # Fallback: try tflite-runtime or full tensorflow
+            try:
+                from tflite_runtime.interpreter import Interpreter
+            except ImportError:
+                import tensorflow as tf
+                Interpreter = tf.lite.Interpreter
+            
+            # Create a simple wrapper for non-Coral mode
+            def make_interpreter(model_path):
+                return Interpreter(model_path=model_path)
+            
+            classify = None  # Will use manual classification
+            print("Using TensorFlow Lite (CPU mode, no Coral acceleration)")
+        except ImportError:
+            print("Set MOCK_MODE=true to test without Coral hardware")
+            print("Or install pycoral: pip install --extra-index-url https://google-coral.github.io/py-repo/ pycoral~=0.2")
+            print("Or install tensorflow: pip install tensorflow")
+            exit(1)
 
 
 # Configuration

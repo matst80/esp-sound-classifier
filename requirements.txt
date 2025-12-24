@@ -4,4 +4,4 @@ numpy>=1.21.0
 soundfile>=0.12.0
 
 # Coral/TFLite - Linux only, install separately:
-# pip install --extra-index-url https://google-coral.github.io/py-repo/ pycoral~=2.0 tflite-runtime
+# pip install --extra-index-url https://google-coral.github.io/py-repo/ pycoral~=0.2 tflite-runtime
